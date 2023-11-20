@@ -2,10 +2,25 @@
 #include "juego.h"
 #include "adversario.h"
 #include "pokemon.h"
+#include <stdlib.h>
+
+struct adversario {
+	lista_t* pokemones;
+};
 
 adversario_t *adversario_crear(lista_t *pokemon)
 {
-	return NULL;
+	if (!pokemon)
+		return NULL;
+	
+	adversario_t *adversario = calloc(1, sizeof(adversario_t));
+
+	if (!adversario)
+		return NULL;
+
+	adversario->pokemones = pokemon;
+
+	return adversario;
 }
 
 bool adversario_seleccionar_pokemon(adversario_t *adversario, char **nombre1,
@@ -32,4 +47,8 @@ void adversario_informar_jugada(adversario_t *a, jugada_t j)
 
 void adversario_destruir(adversario_t *adversario)
 {
+	if (adversario) {
+		lista_destruir(adversario->pokemones);
+		free(adversario);
+	}
 }
