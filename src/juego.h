@@ -63,7 +63,7 @@ lista_t *juego_listar_pokemon(juego_t *juego);
  *
  * Retorna TODO_OK o ERROR_GENERAL en caso de error.
  *
- * Opcionalmente puede devolver POKEMON_REPETIDO o POKEMON_INEXISTENTE.
+ * Opcionalmente puede devolver POKEMON_REPETIDO o POKEMON_INEXISTENT E.
  */
 JUEGO_ESTADO juego_seleccionar_pokemon(juego_t *juego, JUGADOR jugador,
 				       const char *nombre1, const char *nombre2,

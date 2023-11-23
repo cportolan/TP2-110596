@@ -6,21 +6,6 @@
 #include "src/adversario.h"
 #include <stdio.h>
 
-bool mostrar_poke(void *p, void* aux)
-{
-	if (!p)
-		return false;
-	
-	pokemon_t *pokemon = p;
-	printf("Nombre: %s\n", pokemon_nombre(pokemon));
-	return true;
-}
-
-void listar_pokemones(juego_t *juego)
-{
-	lista_con_cada_elemento(juego_listar_pokemon(juego), mostrar_poke, NULL);
-}
-
 /**
 * Este main debe ser modificado para que el usuario pueda jugar el juego. Las
 * instrucciones existentes son solamente a modo ilustrativo del funcionamiento
@@ -95,28 +80,39 @@ void listar_pokemones(juego_t *juego)
 
 int main(int argc, char const *argv[])
 {
-	// Creo el juego.
 	juego_t *juego = juego_crear();
-
-	// Creo el menu y agrego sus comandos.
+	adversario_t *adversario = adversario_crear(juego_listar_pokemon(juego));
 	menu_t *menu = menu_crear();
-	menu_agregar_comando(menu, "l", "Listar pokemones", listar_pokemones);
-	menu_agregar_comando(menu, "c", "Cargar un archivo", menu_pedir_archivo);
-	// menu_agregar_comando(menu, "h", "Mostrar ayuda", mostrar_ayuda);
+	agregar_todos_los_comandos(menu);
 
-	printf("Hola USER!\n\nPor favor, ingrese la ruta junto al nombre del archivo con pokemones para comenzar a jugar:\n");
+	if (!juego || !adversario || !menu)
+		return ERROR_GENERAL;
+
+	// Le pido al usuario que ingrese el archivo y carga el juego con los pokemones. Luego, elimino el comando.
 	menu_ejecutar_comando(menu, "c", juego);
+	menu_eliminar_comando(menu, "c");
 
-	printf("Ingrese comandos a continuacion o escriba 'h' para obtener ayuda.\n");
+	// Genero una lista con todos los pokemones.
+	menu_ejecutar_comando(menu, "l", juego);
 
-	while (!juego_finalizado(juego)) {
-		printf("TP2> ");
+	// Se eligen tres pokemones para iniciar el juego.
+	menu_ejecutar_comando(menu, "s", juego);
+	menu_eliminar_comando(menu, "s");
+	menu_eliminar_comando(menu, "l");
+
+	// Se debe elegir el pokemon y el ataque para realizar la jugada.
+
+	bool cortar = false;
+
+	while (!cortar || !juego_finalizado(juego)) {
+		printf("Comando: ");
 		char linea[10];
 		fgets(linea, 10, stdin);
 		linea[1] = 0;
 
-		if(!menu_ejecutar_comando(menu, linea, juego))
-			printf("Ese comando no existe, por favor, coloque un comando existente o 'h' para obtener ayuda.\n");
+		menu_ejecutar_comando(menu, linea, juego);
+		if (linea[0] == 'q')
+			cortar = true;
 	}
 
 	// Destruyo el juego.

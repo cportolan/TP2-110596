@@ -12,10 +12,38 @@ typedef struct comando comando_t;
 
 typedef struct menu menu_t;
 
+typedef struct info info_t;
+
 /*
 	* Pide al usuario el archivo para poder comenzar a jugar.
 */
 void menu_pedir_archivo();
+
+/*
+	* Muestra los comandos de ayuda con una interfaz grafica amigable.
+*/
+void mostrar_ayuda();
+
+/*
+	* Printea una lista de todos los pokemones.
+*/
+void listar_pokemones();
+
+/*
+	* Sale del juego.
+*/
+void quit();
+
+/*
+	* Los jugadores deben elegir tres pokemones.
+*/
+void jugador_seleccionar_pokemon();
+
+
+/*
+	* Los jugadores realizan la jugada eligiendo pokemon y ataque.
+*/
+void jugador_realizar_jugada();
 
 /*
     * Crea el menu reservando la memoria necesaria e inicializando los campos del mismo. 
@@ -62,7 +90,12 @@ size_t menu_cantidad_comandos(menu_t *menu);
 	* Devuelve NULL en caso de error o de no poder eliminarlo, 
 	* o el menú en caso contrario.
 */
-menu_t *menu_eliminar_comando(menu_t *menu, const char *instruccion);
+menu_t *menu_eliminar_comando(menu_t *menu, char *instruccion);
+
+/*
+	* Agrega todos los comandos para los pokemones.
+*/
+void agregar_todos_los_comandos(menu_t *menu);
 
 /* 
 	* Libera la memoria reservada para el menu
