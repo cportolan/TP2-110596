@@ -132,20 +132,28 @@ bool pokemones_repetidos(const char *nombre1, const char *nombre2, const char *n
 	return (strcmp(nombre1, nombre2) == 0 || strcmp(nombre1, nombre3) == 0 || strcmp(nombre2, nombre3) == 0);
 }
 
-void insertar_pokemones_jugador(juego_t *juego, JUGADOR jugador, pokemon_t *p1, pokemon_t *p2, pokemon_t *p3)
+bool insertar_pokemones_jugador(juego_t *juego, JUGADOR jugador, pokemon_t *p1, pokemon_t *p2, pokemon_t *p3)
 {
 	if (jugador == JUGADOR1) {
-		lista_insertar(juego->jugador1->pokemones_elegidos, p1);
-		lista_insertar(juego->jugador1->pokemones_elegidos, p2);
-		lista_insertar(juego->jugador1->pokemones_elegidos, p3);
+		if (!lista_insertar(juego->jugador1->pokemones_elegidos, p1))
+			return false;
 		con_cada_ataque(p1, pasar_ataques, juego->jugador1->ataques_disponibles);
+
+		if (!lista_insertar(juego->jugador1->pokemones_elegidos, p2))
+			return false;
 		con_cada_ataque(p2, pasar_ataques, juego->jugador1->ataques_disponibles);
+
+		if (!lista_insertar(juego->jugador1->pokemones_elegidos, p3))
+			return false;
 		con_cada_ataque(p3, pasar_ataques, juego->jugador1->ataques_disponibles);
 
 	} else if (jugador == JUGADOR2) {
-		lista_insertar(juego->jugador1->pokemones_elegidos, p3);
+		if (!lista_insertar(juego->jugador1->pokemones_elegidos, p3))
+			return false;
 		con_cada_ataque(p3, pasar_ataques, juego->jugador1->ataques_disponibles);
 	}
+
+	return true;
 }
 
 JUEGO_ESTADO juego_seleccionar_pokemon(juego_t *juego, JUGADOR jugador,
@@ -164,7 +172,9 @@ JUEGO_ESTADO juego_seleccionar_pokemon(juego_t *juego, JUGADOR jugador,
 	if (!p1 || !p2 || !p3)
 		return POKEMON_INEXISTENTE;
 		
-	insertar_pokemones_jugador(juego, jugador, p1, p2, p3);
+	if (!insertar_pokemones_jugador(juego, jugador, p1, p2, p3))
+		return ERROR_GENERAL;
+		
 	return TODO_OK;
 }
 
@@ -275,7 +285,7 @@ resultado_jugada_t juego_jugar_turno(juego_t *juego, jugada_t jugada_jugador1,
 	eliminar_ataque_usado(juego->jugador1->ataques_disponibles, ataque_p1);
 
 	juego->rondas++;
-	
+
 	if (juego->rondas >= MAX_RONDAS_JUEGO)
 		juego->terminado = true;
 

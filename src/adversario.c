@@ -96,16 +96,6 @@ pokemon_t *pokemon_aleatorio(lista_t *pokemones)
 			pokemon_encontrado = true;
 	}
 
-
-	// size_t pos = (size_t)rand() % (lista_tamanio(pokemones));
-	// pokemon_t *aux = lista_elemento_en_posicion(pokemones, pos);
-	// int contador = 0;
-
-	// if (!aux || con_cada_ataque(aux, contar_ataques, contador) > 0) {
-	// 	printf("Hubo un error al obtener el pokemon aleatorio.\n");
-	// 	return NULL;
-	// }
-
 	return aux;
 }
 
@@ -125,11 +115,9 @@ struct ataque* ataque_aleatorio(pokemon_t *pokemon, lista_t *ataques)
 		aux = lista_elemento_en_posicion(ataques, pos);
 
 		if (pokemon_buscar_ataque(pokemon, aux->nombre) != NULL && aux != NULL) {
-			
 			lista_quitar_de_posicion(ataques, pos);
 			ataque_encontrado = true;
 		} else {
-			printf("print en el else jaja\n");
 			ataque_encontrado = false;
 		}
 	}	
