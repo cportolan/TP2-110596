@@ -45,6 +45,7 @@ int main(int argc, char const *argv[])
 		return 0;
 	}
 
+	int rondas = 0;
 	inicializar_juego(juego, adversario, partida);
 	jugada_t jugada_jugador = {.pokemon = " ", .ataque = " "};
 
@@ -63,6 +64,8 @@ int main(int argc, char const *argv[])
 			printf("\n-> El jugador 1 tiene %i puntos.\n", juego_obtener_puntaje(juego, JUGADOR1));
 			printf("-> El adversario tiene %i puntos.\n", juego_obtener_puntaje(juego, JUGADOR2));
 			printf("Se jugo la ronda correctamente.\n");
+			rondas++;
+			printf("-> RONDAS: %i", rondas);
 		}
 			
 	}
