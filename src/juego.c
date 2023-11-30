@@ -226,6 +226,7 @@ int calcular_puntaje(struct ataque *ataque, RESULTADO_ATAQUE resultado, int *pun
 	return *puntos;
 }
 
+
 bool validar_jugada(juego_t *juego, jugada_t jugada) 
 {
 	if (!juego)

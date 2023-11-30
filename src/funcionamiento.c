@@ -7,6 +7,11 @@
 #include <string.h>
 #include <stdio.h>
 
+typedef struct jugador_pokedata {
+	char nombre_pokemon[20];
+	int usado;
+} jugador_pokedata_t;
+
 struct partida {
 	lista_t *pokemones_jugador;
 };
@@ -309,7 +314,7 @@ jugada_t elegir_jugada()
 	return jugada;
 }
 
-bool jugada_valida(jugada_t jugada, struct partida *partida)
+bool jugada_valida(juego_t *juego, jugada_t jugada, struct partida *partida)
 {
 	pokemon_t *p = lista_buscar_elemento(partida->pokemones_jugador, comparar_pokemones, jugada.pokemon);
 	if ((p != NULL) && (pokemon_buscar_ataque(p, jugada.ataque) != NULL)) {

@@ -94,7 +94,7 @@ jugada_t elegir_jugada();
 /*
 	* Valida la jugada.
 */
-bool jugada_valida(jugada_t jugada, partida_t *partida);
+bool jugada_valida(juego_t *juego, jugada_t jugada, partida_t *partida);
 
 /*
 	* Determina el ganador de la partida.

@@ -53,7 +53,7 @@ int main(int argc, char const *argv[])
 
 		jugada_jugador = elegir_jugada();
 
-		while (!jugada_valida(jugada_jugador, partida)) {
+		while (!jugada_valida(juego, jugada_jugador, partida)) {
 			jugada_jugador = elegir_jugada();
 		}
 		

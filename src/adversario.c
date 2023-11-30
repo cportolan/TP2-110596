@@ -9,16 +9,17 @@
 #include <string.h>
 #include <stdio.h>
 
-typedef struct pokedata {
-	pokemon_t *pokemon;
+typedef struct adversario_pokedata {
+	char nombre_pokemon[20];
 	int pokemon_usado;
-} pokedata_t;
+} adversario_pokedata_t;
 
 struct adversario {
 	lista_t* pokemones_originales;
 	lista_t *ataques_disponibles;
 	lista_t *pokemones_adversario;
 	lista_t *pokemones_jugador;
+	adversario_pokedata_t pokedatas[3];
 	int adversario_puntaje;
 };
 
@@ -81,8 +82,6 @@ pokemon_t *pokemon_aleatorio(lista_t *pokemones)
 	bool pokemon_encontrado = false;
 	pokemon_t *aux;
 
-	
-
 	while (!pokemon_encontrado) {
 		size_t pos;
 
@@ -121,7 +120,7 @@ bool ataque_usado(lista_t *ataques, struct ataque *ataque)
 	return true;
 }
 
-struct ataque* ataque_aleatorio(adversario_t *adversario, pokemon_t *pokemon, lista_t *ataques)
+struct ataque* ataque_aleatorio(pokemon_t *pokemon, lista_t *ataques)
 {
 	bool ataque_encontrado = false;
 	struct ataque *aux;
@@ -162,6 +161,8 @@ bool insertar_tres_pokemones_aleatorios(adversario_t *adversario)
 		if (!p)
 			return false;
 
+		strcpy(adversario->pokedatas[i].nombre_pokemon, pokemon_nombre(p));
+		adversario->pokedatas[i].pokemon_usado = 0;
 		lista_insertar(adversario->pokemones_adversario, p);
 		con_cada_ataque(p, insertar_ataques_en_lista, adversario->ataques_disponibles);
 	}
@@ -221,6 +222,22 @@ bool adversario_pokemon_seleccionado(adversario_t *adversario, char *nombre1,
 	return true;
 }
 
+bool pokemon_con_ataques(pokemon_t *pokemon, adversario_t *adversario)
+{
+	for (int i = 0; i < 3; i++) {
+		if (strcmp(pokemon_nombre(pokemon), adversario->pokedatas[i].nombre_pokemon) == 0) {
+			if (adversario->pokedatas[i].pokemon_usado < 3) {
+				printf("El pokemon se uso %i vez/veces ", adversario->pokedatas[i].pokemon_usado);
+				adversario->pokedatas[i].pokemon_usado++;
+				printf("y ahora se aumento a %i vez/veces\n", adversario->pokedatas[i].pokemon_usado);
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 jugada_t adversario_calcular_jugada(adversario_t *adversario, lista_t *pokemones, lista_t *ataques)
 {
 	jugada_t jugada;
@@ -232,13 +249,13 @@ jugada_t adversario_calcular_jugada(adversario_t *adversario, lista_t *pokemones
 	while(!poke_encontrado) {
 		pokemon = pokemon_aleatorio(pokemones);
 
-		if (pokemon != NULL)
+		if (pokemon != NULL && pokemon_con_ataques(pokemon, adversario)) 
 			poke_encontrado = true;
 	}
 
 	bool ataque_encontrado = false;
 	while(!ataque_encontrado) {
-		ataque = ataque_aleatorio(adversario, pokemon, ataques);
+		ataque = ataque_aleatorio(pokemon, ataques);
 
 		if (ataque != NULL)
 			ataque_encontrado = true;
