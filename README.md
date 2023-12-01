@@ -53,7 +53,9 @@ Para el funcionamiento del juego use el `TDA Lista` que implementamos anteriorme
 
 - Explique las complejidades de cada función implementada.
 
-En `juego_crear`: En esta funcion, lo que se hace es reservar memoria para todo lo que este relacionado con la estructura juego_t. Tenemos un malloc para el juego, y mallocs para las listas que se encuentran dentro de este struct. Por lo tanto, diciendo que malloc/calloc en el peor de los casos tiene complejidad n, la complejidad final de esta funcion es de **O(n)**.
+FUNCIONES DE **JUEGO.C**
+
+En `juego_crear`: En esta funcion, lo que se hace es reservar memoria para todo lo que este relacionado con la estructura juego_t. Tenemos un malloc para el juego, y mallocs para las listas que se encuentran dentro de este struct. La complejidad de alloc es despreciable.
 
 En `juego_cargar_pokemon`: En esta funcion comenzamos validando que los punteros no sean nulls, que es constante. Luego, llamamos a pokemon_cargar_archivo, que su complejidad depende de la cantidad de lineas que tengo el archivo que le pasamos a la funcion, por lo tanto realiza sus operaciones n veces. A su vez, si la informacion cargada no cumple con la validacion, se llama a un destructor, el cual tiene un for, por lo tanto realiza sus operaciones n veces relacionada a la cantidad de pokemones cargados, y por ultimo tenemos un con_cada_pokemon, que itera y va llamando a lista_insertar que es constante, por lo tanto tiene complejidad n. Entonces, como complejidad final de juego_cargar_pokemon, podemos decir que es **O(n)**.
 
@@ -68,3 +70,16 @@ En `juego_obtener_puntaje`: En esta funcion se tienen muchas operaciones constan
 En `juego_finalizado`: Solamente se tiene un return en esta funcion, que es devolver un campo de la estructura juego, por lo tanto la complejidad es constante, seria **O(1)**.
 
 En `juego_destruir`: Se comienza llamando a pokemon_destruir_todo que tiene un for, es decir, que itera n veces, por lo tanto se considera de complejidad computacional O(n), luego tenemos tres lista_destruir que se encargan de liberar la memoria almacenada para las listas utilizadas en el juego, que cada lista_destruir tiene un for, por lo tanto tambien son O(n) y un free() que es O(1) es decir tiene complejidad constante. Entonces, la suma total de complejidades computacionales es **O(n)**.
+
+FUNCIONES DE **ADVERSARIO.C**
+
+En `adversario_crear`: Se reserva toda la memoria necesaria para el uso del adversario. Podemos decir que la complejidad malloc/calloc es despreciable.
+
+En `adversario_seleccionar_pokemon`: En adversario seleccionar pokemon tenemos un while, que itera n veces ya que depende de un bool. Luego, dentro del while llamamos a una funcion que realiza tres lista insertar, y tres con cada ataque, que asumimos en esta implementacion que son de complejidad constante ya que siempre realizan la misma cantidad de iteraciones. Luego tenemos un if, que siempre en un if se debe tomar el peor de los casos, por lo tanto, el peor de los casos es cuando se eliminan los elementos de la lista llamando a una funcion aparte, entonces la complejidad final quedaria **O(n^2)**.
+
+En `adversario_pokemon_seleccionado`: Hay tres llamados a lista insertar y returns, esta funcion tiene como complejidad **O(1)**.
+
+En `adversario_proxima_jugada`: En esta funcion lo que se hace es llamar a una funcion aparte de adversario_calcular_jugada, dentro de ellas elegimos un pokemon y un ataque aleatorio, que son O(n), que estan dentro de otro while, que realice n iteraciones, por lo tanto la complejidad final es **O(n^2)**.
+
+En `adversario_destruir`: Se llama tres veces a lista_destruir, eliminando toda la memoria reservada para el adversario, y luego se hace un free. En terminos generales, siendo de complejidad n cada lista_destruir, la complejidad final es **O(n)**.
+
