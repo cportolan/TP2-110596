@@ -36,9 +36,27 @@ adversario_t *adversario_crear(lista_t *pokemon)
 		return NULL;
 
 	adversario->pokemones_originales = pokemon;
+
 	adversario->pokemones_adversario = lista_crear();
+
+	if (!adversario->pokemones_adversario)
+		return NULL;
+
 	adversario->ataques_disponibles = lista_crear();
+
+	if (!adversario->ataques_disponibles) {
+		lista_destruir(adversario->pokemones_adversario);
+		return NULL;
+	}
+
 	adversario->pokemones_jugador = lista_crear();
+
+	if (!adversario->pokemones_jugador) {
+		lista_destruir(adversario->pokemones_adversario);
+		lista_destruir(adversario->ataques_disponibles);
+		return NULL;
+	}
+
 	adversario->adversario_puntaje = 0;
 
 	return adversario;
@@ -163,7 +181,8 @@ bool insertar_tres_pokemones_aleatorios(adversario_t *adversario)
 
 		strcpy(adversario->pokedatas[i].nombre_pokemon, pokemon_nombre(p));
 		adversario->pokedatas[i].pokemon_usado = 0;
-		lista_insertar(adversario->pokemones_adversario, p);
+		if(!lista_insertar(adversario->pokemones_adversario, p))
+			return false;
 		con_cada_ataque(p, insertar_ataques_en_lista, adversario->ataques_disponibles);
 	}
 
@@ -227,9 +246,7 @@ bool pokemon_con_ataques(pokemon_t *pokemon, adversario_t *adversario)
 	for (int i = 0; i < 3; i++) {
 		if (strcmp(pokemon_nombre(pokemon), adversario->pokedatas[i].nombre_pokemon) == 0) {
 			if (adversario->pokedatas[i].pokemon_usado < 3) {
-				printf("El pokemon se uso %i vez/veces ", adversario->pokedatas[i].pokemon_usado);
 				adversario->pokedatas[i].pokemon_usado++;
-				printf("y ahora se aumento a %i vez/veces\n", adversario->pokedatas[i].pokemon_usado);
 				return true;
 			}
 		}
@@ -277,8 +294,7 @@ jugada_t adversario_proxima_jugada(adversario_t *adversario)
 	
 	j = adversario_calcular_jugada(adversario, adversario->pokemones_adversario, adversario->ataques_disponibles);
 
-	printf("-> JUGADA ADVERSARIO: El adversario ha jugado al pokemon: %s con el ataque: %s\n", j.pokemon, j.ataque);
-	printf("El adversario tiene %i ataques\n", (int)lista_tamanio(adversario->ataques_disponibles));
+	printf("\n-> JUGADA ADVERSARIO: El adversario ha jugado al pokemon: %s con el ataque: %s\n", j.pokemon, j.ataque);
 	return j;
 }
 
@@ -290,16 +306,9 @@ void adversario_informar_jugada(adversario_t *a, jugada_t j)
 void adversario_destruir(adversario_t *adversario)
 {
 	if (adversario) {
-
-		if (adversario->pokemones_originales)
-			lista_destruir(adversario->pokemones_originales);
-		else if (adversario->pokemones_jugador)
-			lista_destruir(adversario->pokemones_jugador);
-		else if (adversario->pokemones_adversario)
-			lista_destruir(adversario->pokemones_adversario);
-		else if (adversario->ataques_disponibles)
-			lista_destruir(adversario->ataques_disponibles);
-		
+		lista_destruir(adversario->pokemones_jugador);
+		lista_destruir(adversario->pokemones_adversario);
+		lista_destruir(adversario->ataques_disponibles);
 		free(adversario);
 	}
 }

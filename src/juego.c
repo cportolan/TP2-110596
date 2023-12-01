@@ -243,11 +243,17 @@ bool validar_jugada(juego_t *juego, jugada_t jugada)
 
 bool es_ataque(struct ataque *ataque1, struct ataque *ataque2)
 {
+	if (!ataque1 || !ataque2)
+		return false;
+		
 	return ((strcmp(ataque1->nombre, ataque2->nombre) == 0) && (ataque1->poder == ataque2->poder) && (ataque1->tipo == ataque2->tipo));
 }
 
 void eliminar_ataque_usado(lista_t *ataques, struct ataque* ataque)
 {
+	if (!ataques || !ataque)
+		return;
+	
 	for (size_t i = 0; i < lista_tamanio(ataques); i++)
 		if (es_ataque(ataque, lista_elemento_en_posicion(ataques, i))) {
 			lista_quitar_de_posicion(ataques, i);

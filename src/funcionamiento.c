@@ -95,7 +95,7 @@ bool existe_pokemon(char nombre[MAX_STRING], lista_t *lista)
 void mostrar_tipo(pokemon_t *p)
 {
 	char* tipo = cambiar_tipo_letra(pokemon_tipo(p));
-	printf("Tipo de pokemon: %s\n", tipo);
+	printf("            -> Tipo: %s\n", tipo);
 }
 
 void mostrar_ataque(const struct ataque *ataque, void *aux)
@@ -103,17 +103,7 @@ void mostrar_ataque(const struct ataque *ataque, void *aux)
 	if (!ataque) 
 		return;
 		
-	printf("-> Ataque: %s\n", ataque->nombre);
-}
-
-bool mostrar_ataques_adversario(void *a, void *aux)
-{
-	if (!a)
-		return false;
-
-	struct ataque *ataque = a;
-	printf("-> ATAQUE ADVERSARIO: %s\n", ataque->nombre);
-	return true;
+	printf("            -> Ataque: %s\n", ataque->nombre);
 }
 
 bool mostrar_poke(void *p, void* aux)
@@ -122,8 +112,8 @@ bool mostrar_poke(void *p, void* aux)
 		return false;
 	
 	pokemon_t *pokemon = p;
-	printf("-> Nombre: %s\n", pokemon_nombre(pokemon));
-	mostrar_tipo(pokemon);
+	printf("            -> NOMBRE: %s\n", pokemon_nombre(pokemon));
+	mostrar_tipo(pokemon);	
 	con_cada_ataque(pokemon, mostrar_ataque, NULL);
 	printf("\n");
 	return true;
@@ -173,9 +163,11 @@ void mostrar_bienvenida(juego_t *juego)
 
 void listar_pokemones(juego_t *juego)
 {
-	printf("\n");
-	printf("LOS POKEMONES DISPONIBLES SON: \n\n");
+	printf("\n	  ╔══════════════════════════════════════════════════════════════╗\n"
+	       "	  ║                   LISTADO OFICIAL DE POKEMONES               ║\n"
+	       "	  ╚══════════════════════════════════════════════════════════════╝\n\n\n");
 	lista_con_cada_elemento(juego_listar_pokemon(juego), mostrar_poke, NULL);
+	printf("\n\n");
 }
 
 void quit()
@@ -295,6 +287,8 @@ void menu_pedir_archivo(juego_t *juego) {
 			printf("\n\n 	  ╔══════════════════════════════════════════════════════════════╗\n"
 	       	"	  ║  ARCHIVO CARGADO CORRECTAMENTE! LA LISTA TIENE %i POKEMONES!  ║\n"
 	       "	  ╚══════════════════════════════════════════════════════════════╝\n\n", (int)lista_tamanio(juego_listar_pokemon(juego)));	
+
+		free(a);
 	}
 
 	return;
@@ -331,11 +325,17 @@ void elegir_ganador(juego_t *juego)
 	int puntaje_j2 = juego_obtener_puntaje(juego, JUGADOR2);
 
 	if (puntaje_j1 > puntaje_j2)
-		printf("\n       -> FELICIDADES, GANASTE LA BATALLA DE POKEMONES. <-\n");
+		printf("\n\n 	  ╔══════════════════════════════════════════════════════════════╗\n"
+	       	"	  ║ FELICITACIONES, HAS CONSEGUIDO GANAR LA BATALLA DE POKEMONES!║\n"
+	       "	  ╚══════════════════════════════════════════════════════════════╝\n\n");
 	else if (puntaje_j1 < puntaje_j2)
-		printf("\n       -> LO SENTIMOS, HAS PERDIDO LA BATALLA DE POKEMONES <-\n");
+		printf("\n\n 	  ╔══════════════════════════════════════════════════════════════╗\n"
+	       	"	  ║ LO SENTIMOS! HAS PERDIDO CONTRA TU OPONENTE, VUELVE A JUGAR! ║\n"
+	       "	  ╚══════════════════════════════════════════════════════════════╝\n\n");
 	else if (puntaje_j1 == puntaje_j2)
-		printf("\n       -> ESTA BATALLA HA RESULTADO EN UN EMPATE, VUELVA A JUGAR PARA GANAR!\n");
+		printf("\n\n 	  ╔══════════════════════════════════════════════════════════════╗\n"
+	       	"	  ║ ESTA BATALLA HA RESULTADO EN UN EMPATE! WOW! VUELVE A JUGAR! ║\n"
+	       "	  ╚══════════════════════════════════════════════════════════════╝\n\n");
 }
 
 bool inicializar_juego(juego_t *juego, adversario_t *adversario, struct partida *partida) {
