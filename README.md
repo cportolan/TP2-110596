@@ -77,8 +77,6 @@ En `adversario_crear`: Se reserva toda la memoria necesaria para el uso del adve
 
 En `adversario_seleccionar_pokemon`: En adversario seleccionar pokemon tenemos un while, que itera n veces ya que depende de un bool. Luego, dentro del while llamamos a una funcion que realiza tres lista insertar, y tres con cada ataque, que asumimos en esta implementacion que son de complejidad constante ya que siempre realizan la misma cantidad de iteraciones. Luego tenemos un if, que siempre en un if se debe tomar el peor de los casos, por lo tanto, el peor de los casos es cuando se eliminan los elementos de la lista llamando a una funcion aparte, entonces la complejidad final quedaria **O(n^2)**.
 
-En `adversario_pokemon_seleccionado`: Hay tres llamados a lista insertar y returns, esta funcion tiene como complejidad **O(1)**.
-
 En `adversario_proxima_jugada`: En esta funcion lo que se hace es llamar a una funcion aparte de adversario_calcular_jugada, dentro de ellas elegimos un pokemon y un ataque aleatorio, que son O(n), que estan dentro de otro while, que realice n iteraciones, por lo tanto la complejidad final es **O(n^2)**.
 
 En `adversario_destruir`: Se llama tres veces a lista_destruir, eliminando toda la memoria reservada para el adversario, y luego se hace un free. En terminos generales, siendo de complejidad n cada lista_destruir, la complejidad final es **O(n)**.

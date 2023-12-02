@@ -26,6 +26,10 @@ struct juego {
 
 const int MAX_RONDAS_JUEGO = 9;
 const int POKEMONES_MINIMOS_PARA_JUGAR = 4;
+const int VALOR_INICIAL = 0;
+const unsigned VALOR_MULTIPLICAR_PUNTAJE = 3;
+const unsigned VALOR_DIVIDIR_PUNTAJE = 2;
+const unsigned RESTO_CERO = 0;
 
 int comparador_ataques(void *_ataque, void *_nombre)
 {
@@ -78,7 +82,7 @@ jugador_t *jugador_crear()
 	
 	jugador->pokemones_elegidos = lista_crear();
 	jugador->ataques_disponibles = lista_crear();
-	jugador->puntaje = 0;
+	jugador->puntaje = VALOR_INICIAL;
 
 	return jugador;
 }
@@ -93,9 +97,9 @@ juego_t *juego_crear()
 	juego->pokemones = lista_crear();
 	juego->info = NULL;
 	juego->jugador1 = jugador_crear();
-	juego->puntaje_adversario = 0;
+	juego->puntaje_adversario = VALOR_INICIAL;
 	juego->terminado = false;
-	juego->rondas = 0;
+	juego->rondas = VALOR_INICIAL;
 
 	return juego;
 }
@@ -214,10 +218,10 @@ RESULTADO_ATAQUE calcular_resultado(enum TIPO ataque, enum TIPO pokemon)
 int calcular_puntaje(struct ataque *ataque, RESULTADO_ATAQUE resultado, int *puntos)
 {
 	if (resultado == ATAQUE_EFECTIVO)
-		*puntos += ((int)(ataque->poder * 3));
+		*puntos += ((int)(ataque->poder * VALOR_MULTIPLICAR_PUNTAJE));
 	else if (resultado == ATAQUE_INEFECTIVO) {
-		*puntos += (int)(ataque->poder / 2);
-		if ((int)ataque->poder % 2 != 0)
+		*puntos += ((int)(ataque->poder / VALOR_DIVIDIR_PUNTAJE));
+		if ((ataque->poder % VALOR_DIVIDIR_PUNTAJE) != RESTO_CERO)
 			(*puntos)++;
 	}
 	else
@@ -254,7 +258,7 @@ void eliminar_ataque_usado(lista_t *ataques, struct ataque* ataque)
 	if (!ataques || !ataque)
 		return;
 	
-	for (size_t i = 0; i < lista_tamanio(ataques); i++)
+	for (size_t i = (size_t)VALOR_INICIAL; i < lista_tamanio(ataques); i++)
 		if (es_ataque(ataque, lista_elemento_en_posicion(ataques, i))) {
 			lista_quitar_de_posicion(ataques, i);
 			return;
