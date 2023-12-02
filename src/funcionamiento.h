@@ -89,7 +89,7 @@ bool *inicializar_juego(juego_t *juego, adversario_t *adversario, partida_t *par
 /*
 	* El jugador elige una jugada (pokemon y ataque).
 */
-jugada_t elegir_jugada();
+jugada_t elegir_jugada(partida_t *partida);
 
 /*
 	* Valida la jugada.

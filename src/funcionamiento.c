@@ -14,6 +14,8 @@ typedef struct jugador_pokedata {
 
 struct partida {
 	lista_t *pokemones_jugador;
+	struct ataque ataques_usados_jugador[9];
+	int cant_ataques_usados_jugador;
 };
 
 #define MAX_STRING 256
@@ -35,6 +37,10 @@ struct partida* crear_struct_partida(juego_t *juego)
 		return NULL;
 
 	p->pokemones_jugador = lista_crear();
+	p->cant_ataques_usados_jugador = 0;
+
+	for(int i = 0; i < 9; i++)
+		strcpy(p->ataques_usados_jugador[i].nombre, " ");
 
 	if (!p->pokemones_jugador)
 		return NULL;
@@ -294,7 +300,7 @@ void menu_pedir_archivo(juego_t *juego) {
 	return;
 }
 
-jugada_t elegir_jugada()
+jugada_t elegir_jugada(struct partida* partida)
 {
 	jugada_t jugada;
 
@@ -308,10 +314,23 @@ jugada_t elegir_jugada()
 	return jugada;
 }
 
+bool ataque_jugador_usado(struct partida* partida, char nombre_ataque[20])
+{
+	for (int i = 0; i < 9; i++) {
+		if (strcmp(partida->ataques_usados_jugador[i].nombre, nombre_ataque) == 0) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool jugada_valida(juego_t *juego, jugada_t jugada, struct partida *partida)
 {
 	pokemon_t *p = lista_buscar_elemento(partida->pokemones_jugador, comparar_pokemones, jugada.pokemon);
-	if ((p != NULL) && (pokemon_buscar_ataque(p, jugada.ataque) != NULL)) {
+	if ((p != NULL) && (pokemon_buscar_ataque(p, jugada.ataque) != NULL) && !ataque_jugador_usado(partida, jugada.ataque)) {
+		strcpy(partida->ataques_usados_jugador[partida->cant_ataques_usados_jugador].nombre, jugada.ataque);
+		partida->cant_ataques_usados_jugador++;
 		return true;
 	} else {
 		printf("\n-> ERROR: Hubo un error al recibir tu jugada. Por favor, escriba nuevamente pokemon y ataque tal como se lo pide y verifique que sea correcto\n");

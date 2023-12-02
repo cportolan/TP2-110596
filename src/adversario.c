@@ -219,7 +219,7 @@ bool pokemon_con_ataques(pokemon_t *pokemon, adversario_t *adversario)
 	return false;
 }
 
-bool ataque_usado(adversario_t *adversario, struct ataque* ataque)
+bool ataque_adversario_usado(adversario_t *adversario, struct ataque* ataque)
 {
 	for (int i = 0; i < 9; i++) {
 		if (strcmp(ataque->nombre, adversario->ataques_usados[i].nombre) == 0) {
@@ -249,7 +249,7 @@ jugada_t adversario_calcular_jugada(adversario_t *adversario)
 	while(!ataque_encontrado) {
 		ataque = ataque_aleatorio(pokemon, adversario);
 
-		if (ataque != NULL && !ataque_usado(adversario, ataque))
+		if (ataque != NULL && !ataque_adversario_usado(adversario, ataque))
 			ataque_encontrado = true;
 	}
 	

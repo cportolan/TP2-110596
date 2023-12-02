@@ -51,10 +51,10 @@ int main(int argc, char const *argv[])
 
 	while (!juego_finalizado(juego)) {
 
-		jugada_jugador = elegir_jugada();
+		jugada_jugador = elegir_jugada(partida);
 
 		while (!jugada_valida(juego, jugada_jugador, partida)) {
-			jugada_jugador = elegir_jugada();
+			jugada_jugador = elegir_jugada(partida);
 		}
 		
 		jugada_t jugada_adversario = adversario_proxima_jugada(adversario);
