@@ -24,7 +24,8 @@ void destruir_struct_partida(partida_t *partida);
 /*
 	* Llena el struct de partida. (pokemones del jugador)
 */
-bool llenar_partida(partida_t *partida, char *poke1, char *poke2, char *poke3, juego_t *juego);
+bool llenar_partida(partida_t *partida, char *poke1, char *poke2, char *poke3,
+		    juego_t *juego);
 
 /*
 	* Muestra un mensaje de bienvenida al usuario.
@@ -74,7 +75,7 @@ void adversario_selecciona_pokemon(adversario_t *adversario);
 /*
 	* Devuelve true si hay pokemones repetidos.
 */
-bool pokemon_repetido(const char* n1, const char *n2, const char *n3);
+bool pokemon_repetido(const char *n1, const char *n2, const char *n3);
 
 /*
 	* Los jugadores realizan la jugada eligiendo pokemon y ataque.
@@ -84,7 +85,8 @@ void jugador_realizar_jugada(juego_t *juego);
 /*
 	* Inicializa el juego, dejandolo listo para poder jugar. Pide informacion y realiza las validaciones.
 */
-bool *inicializar_juego(juego_t *juego, adversario_t *adversario, partida_t *partida);
+bool *inicializar_juego(juego_t *juego, adversario_t *adversario,
+			partida_t *partida);
 
 /*
 	* El jugador elige una jugada (pokemon y ataque).

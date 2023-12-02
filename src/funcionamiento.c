@@ -19,6 +19,7 @@ struct partida {
 };
 
 #define MAX_STRING 256
+
 #define LETRA_ELECTRICO 'E'
 #define LETRA_NORMAL 'N'
 #define LETRA_PLANTA 'P'
@@ -27,19 +28,22 @@ struct partida {
 #define LETRA_ROCA 'R'
 #define LETRA_INICIAR 'i'
 #define LETRA_SALIR 'q'
-const int CANT_POKEMONES_SELECCIONADOS = 3;
 
-struct partida* crear_struct_partida(juego_t *juego)
+const int CANT_POKEMONES_SELECCIONADOS = 3;
+const int INICIO_VALOR = 0;
+const int MAX_ATAQUES_JUGADOR = 9;
+
+struct partida *crear_struct_partida(juego_t *juego)
 {
-	struct partida* p = malloc(sizeof(struct partida));
+	struct partida *p = malloc(sizeof(struct partida));
 
 	if (!p)
 		return NULL;
 
 	p->pokemones_jugador = lista_crear();
-	p->cant_ataques_usados_jugador = 0;
+	p->cant_ataques_usados_jugador = INICIO_VALOR;
 
-	for(int i = 0; i < 9; i++)
+	for (int i = INICIO_VALOR; i < MAX_ATAQUES_JUGADOR; i++)
 		strcpy(p->ataques_usados_jugador[i].nombre, " ");
 
 	if (!p->pokemones_jugador)
@@ -48,7 +52,7 @@ struct partida* crear_struct_partida(juego_t *juego)
 	return p;
 }
 
-void destruir_struct_partida(struct partida* partida)
+void destruir_struct_partida(struct partida *partida)
 {
 	if (partida) {
 		lista_destruir(partida->pokemones_jugador);
@@ -56,7 +60,7 @@ void destruir_struct_partida(struct partida* partida)
 	}
 }
 
-char* cambiar_tipo_letra(enum TIPO tipo)
+char *cambiar_tipo_letra(enum TIPO tipo)
 {
 	switch (tipo) {
 	case ELECTRICO:
@@ -85,56 +89,59 @@ int comparar_pokemones(void *_pokemon, void *_nombre)
 	return strcmp(pokemon_nombre(pokemon), nombre);
 }
 
-bool pokemon_repetido(const char *nombre1, const char *nombre2, const char *nombre3) 
+bool pokemon_repetido(const char *nombre1, const char *nombre2,
+		      const char *nombre3)
 {
-	return (strcmp(nombre1, nombre2) == 0 || strcmp(nombre1, nombre3) == 0 || strcmp(nombre2, nombre3) == 0);
+	return (strcmp(nombre1, nombre2) == 0 ||
+		strcmp(nombre1, nombre3) == 0 || strcmp(nombre2, nombre3) == 0);
 }
 
 bool existe_pokemon(char nombre[MAX_STRING], lista_t *lista)
 {
 	pokemon_t *p = lista_buscar_elemento(lista, comparar_pokemones, nombre);
-	if (!p) 
+	if (!p)
 		return false;
 	return true;
 }
 
 void mostrar_tipo(pokemon_t *p)
 {
-	char* tipo = cambiar_tipo_letra(pokemon_tipo(p));
+	char *tipo = cambiar_tipo_letra(pokemon_tipo(p));
 	printf("            -> Tipo: %s\n", tipo);
 }
 
 void mostrar_ataque(const struct ataque *ataque, void *aux)
 {
-	if (!ataque) 
+	if (!ataque)
 		return;
-		
+
 	printf("            -> Ataque: %s\n", ataque->nombre);
 }
 
-bool mostrar_poke(void *p, void* aux)
+bool mostrar_poke(void *p, void *aux)
 {
 	if (!p)
 		return false;
-	
+
 	pokemon_t *pokemon = p;
 	printf("            -> NOMBRE: %s\n", pokemon_nombre(pokemon));
-	mostrar_tipo(pokemon);	
+	mostrar_tipo(pokemon);
 	con_cada_ataque(pokemon, mostrar_ataque, NULL);
 	printf("\n");
 	return true;
 }
 
-char ingresar_comando() 
-{		
+char ingresar_comando()
+{
 	char letra;
 	bool comando_correcto = false;
 
-	while(!comando_correcto) {
+	while (!comando_correcto) {
 		printf("Ingrese un comando valido (iniciar/salir del juego -> i / q): ");
 		scanf("%c", &letra);
 
-		while(getchar() != '\n');
+		while (getchar() != '\n')
+			;
 
 		if (letra == LETRA_SALIR || letra == LETRA_INICIAR)
 			comando_correcto = true;
@@ -145,25 +152,25 @@ char ingresar_comando()
 
 void mostrar_bienvenida(juego_t *juego)
 {
-		printf("\n\n          ╔══════════════════════════════════════════════════════════════╗\n"
+	printf("\n\n          ╔══════════════════════════════════════════════════════════════╗\n"
 	       "	  ║             BIENVENIDO AL GRAN JUEGO DE POKEMONES!!          ║\n"
 	       "	  ╠══════════════════════════════════════════════════════════════╣\n"
 	       "	  ║ Le doy la bienvenida a este divertido juego de cartas. Este  ║\n"
 	       "	  ║ se dividira por turnos, y se debe ir jugando un pokemon con  ║\n"
 	       "	  ║ un ataque a eleccion. Para iniciar el juego, le voy a pedir  ║\n"
-		   "	  ║ a continuacion que ingrese un archivo con pokemones, luego   ║\n"
-		   "	  ║ se mostrara una lista de todos los pokemones disponibles y   ║\n"
-		   "	  ║ debe elegir tres pokemones. Una vez iniciado el juego, se    ║\n"
-   		   "	  ║ tendra que ir eligiendo un pokemon y un ataque para luchar y ║\n"
-		   "	  ║ la maquina jugara contra usted. Le deseo mucha suerte! :)    ║\n"
-		   "	  ║                                                              ║\n"
-		   "	  ║ Los comandos existentes:                                     ║\n"
-		   "	  ║                                                              ║\n"
+	       "	  ║ a continuacion que ingrese un archivo con pokemones, luego   ║\n"
+	       "	  ║ se mostrara una lista de todos los pokemones disponibles y   ║\n"
+	       "	  ║ debe elegir tres pokemones. Una vez iniciado el juego, se    ║\n"
+	       "	  ║ tendra que ir eligiendo un pokemon y un ataque para luchar y ║\n"
+	       "	  ║ la maquina jugara contra usted. Le deseo mucha suerte! :)    ║\n"
+	       "	  ║                                                              ║\n"
+	       "	  ║ Los comandos existentes:                                     ║\n"
+	       "	  ║                                                              ║\n"
 	       "	  ║                     - i: Iniciar el juego!                   ║\n"
-		   "	  ║                     - q: Salir del juego.                    ║\n"
-		   "	  ║                                                              ║\n"
-		   "	  ║                                                              ║\n"
-		   "	  ║                                     Atentamente, Cristian.   ║\n"
+	       "	  ║                     - q: Salir del juego.                    ║\n"
+	       "	  ║                                                              ║\n"
+	       "	  ║                                                              ║\n"
+	       "	  ║                                     Atentamente, Cristian.   ║\n"
 	       "	  ╚══════════════════════════════════════════════════════════════╝\n\n\n");
 }
 
@@ -172,18 +179,19 @@ void listar_pokemones(juego_t *juego)
 	printf("\n	  ╔══════════════════════════════════════════════════════════════╗\n"
 	       "	  ║                   LISTADO OFICIAL DE POKEMONES               ║\n"
 	       "	  ╚══════════════════════════════════════════════════════════════╝\n\n\n");
-	lista_con_cada_elemento(juego_listar_pokemon(juego), mostrar_poke, NULL);
+	lista_con_cada_elemento(juego_listar_pokemon(juego), mostrar_poke,
+				NULL);
 	printf("\n\n");
 }
 
 void quit()
 {
 	printf("\n\n          ╔══════════════════════════════════════════════════════════════╗\n"
-	    "	  ║                        NOS VEMOS PRONTO                      ║\n"
-	    "	  ╠══════════════════════════════════════════════════════════════╣\n"
-	    "	  ║   Solicistaste el comando de salida. Espero volverte a ver.  ║\n"
-	    "	  ║                           Saludos!                           ║\n"
-	    "	  ╚══════════════════════════════════════════════════════════════╝\n\n\n");
+	       "	  ║                        NOS VEMOS PRONTO                      ║\n"
+	       "	  ╠══════════════════════════════════════════════════════════════╣\n"
+	       "	  ║   Solicistaste el comando de salida. Espero volverte a ver.  ║\n"
+	       "	  ║                           Saludos!                           ║\n"
+	       "	  ╚══════════════════════════════════════════════════════════════╝\n\n\n");
 
 	return;
 }
@@ -193,18 +201,23 @@ void adversario_selecciona_pokemon(adversario_t *adversario)
 	char *nombre1;
 	char *nombre2;
 	char *nombre3;
-	
-	adversario_seleccionar_pokemon(adversario, &nombre1, &nombre2, &nombre3);
+
+	adversario_seleccionar_pokemon(adversario, &nombre1, &nombre2,
+				       &nombre3);
 }
 
-bool llenar_partida(struct partida *partida, char *poke1, char *poke2, char *poke3, juego_t *juego)
+bool llenar_partida(struct partida *partida, char *poke1, char *poke2,
+		    char *poke3, juego_t *juego)
 {
 	if (!poke1 || !poke2 || !poke3)
 		return false;
 
-	pokemon_t *p1 = lista_buscar_elemento(juego_listar_pokemon(juego), comparar_pokemones, poke1);
-	pokemon_t *p2 = lista_buscar_elemento(juego_listar_pokemon(juego), comparar_pokemones, poke2);
-	pokemon_t *p3 = lista_buscar_elemento(juego_listar_pokemon(juego), comparar_pokemones, poke3);
+	pokemon_t *p1 = lista_buscar_elemento(juego_listar_pokemon(juego),
+					      comparar_pokemones, poke1);
+	pokemon_t *p2 = lista_buscar_elemento(juego_listar_pokemon(juego),
+					      comparar_pokemones, poke2);
+	pokemon_t *p3 = lista_buscar_elemento(juego_listar_pokemon(juego),
+					      comparar_pokemones, poke3);
 
 	if (!p1 || !p2 || !p3)
 		return false;
@@ -216,7 +229,8 @@ bool llenar_partida(struct partida *partida, char *poke1, char *poke2, char *pok
 	return true;
 }
 
-void seleccionar_pokemones(juego_t *juego, adversario_t *adversario, struct partida *partida)
+void seleccionar_pokemones(juego_t *juego, adversario_t *adversario,
+			   struct partida *partida)
 {
 	printf("-> SELECCIONE TRES POKEMONES PARA JUGAR ESCRIBIENDO SU NOMBRE <-\n\n");
 
@@ -229,31 +243,31 @@ void seleccionar_pokemones(juego_t *juego, adversario_t *adversario, struct part
 	bool poke3_seleccionado = false;
 
 	printf("-> Ingresa el nombre del primer Pokémon: ");
-	while(!poke1_seleccionado) {
-		
-    	scanf("%s", nombre1);
-		if (existe_pokemon(nombre1, juego_listar_pokemon(juego))) 
+	while (!poke1_seleccionado) {
+		scanf("%s", nombre1);
+		if (existe_pokemon(nombre1, juego_listar_pokemon(juego)))
 			poke1_seleccionado = true;
-		else 
+		else
 			printf("\n-> ERROR: El pokemon ingresado no existe. Vuelva a escribir el pokemon: ");
 	}
 
 	printf("\n-> Ingresa el nombre del segundo Pokémon: ");
-	while(!poke2_seleccionado) {
-    	
-    	scanf("%s", nombre2);
-		if (existe_pokemon(nombre2, juego_listar_pokemon(juego)) && !pokemon_repetido(nombre1, nombre2, " ")) 
+	while (!poke2_seleccionado) {
+		scanf("%s", nombre2);
+		if (existe_pokemon(nombre2, juego_listar_pokemon(juego)) &&
+		    !pokemon_repetido(nombre1, nombre2, " "))
 			poke2_seleccionado = true;
-		else 
+		else
 			printf("\n-> ERROR: El pokemon ingresado no existe o es repetido. Vuelva a escribir el pokemon: ");
 	}
 
 	printf("\n-> Ingresa el nombre del tercer Pokémon: ");
-	while(!poke3_seleccionado) {
-    	scanf("%s", nombre3);
-		if (existe_pokemon(nombre3, juego_listar_pokemon(juego)) && !pokemon_repetido(nombre1, nombre2, nombre3)) 
+	while (!poke3_seleccionado) {
+		scanf("%s", nombre3);
+		if (existe_pokemon(nombre3, juego_listar_pokemon(juego)) &&
+		    !pokemon_repetido(nombre1, nombre2, nombre3))
 			poke3_seleccionado = true;
-		else 
+		else
 			printf("\n-> ERROR: El pokemon ingresado no existe o es repetido. Vuelva a escribir el pokemon: ");
 	}
 
@@ -262,7 +276,8 @@ void seleccionar_pokemones(juego_t *juego, adversario_t *adversario, struct part
 	adversario_selecciona_pokemon(adversario);
 }
 
-void menu_pedir_archivo(juego_t *juego) {
+void menu_pedir_archivo(juego_t *juego)
+{
 	JUEGO_ESTADO cargado = ERROR_GENERAL;
 
 	while (cargado != TODO_OK) {
@@ -274,13 +289,13 @@ void menu_pedir_archivo(juego_t *juego) {
 		}
 
 		printf("\n\n          ╔══════════════════════════════════════════════════════════════╗\n"
-	       "	  ║                  CARGAR ARCHIVO DE POKEMONES                 ║\n"
-	       "	  ╠══════════════════════════════════════════════════════════════╣\n"
-	       "	  ║ Por favor, ingrese el nombre del archivo en el que se hallan ║\n"
-	       "	  ║ todos los pokemones, según muestra el siguiente ejemplo:     ║\n"
-	       "	  ║                       ./ruta/nombre.txt                      ║\n"
-	       "	  ╚══════════════════════════════════════════════════════════════╝\n\n\n"
-	       "Archivo: ");
+		       "	  ║                  CARGAR ARCHIVO DE POKEMONES                 ║\n"
+		       "	  ╠══════════════════════════════════════════════════════════════╣\n"
+		       "	  ║ Por favor, ingrese el nombre del archivo en el que se hallan ║\n"
+		       "	  ║ todos los pokemones, según muestra el siguiente ejemplo:     ║\n"
+		       "	  ║                       ./ruta/nombre.txt                      ║\n"
+		       "	  ╚══════════════════════════════════════════════════════════════╝\n\n\n"
+		       "Archivo: ");
 		scanf(" %255s", a);
 
 		cargado = juego_cargar_pokemon(juego, a);
@@ -291,8 +306,9 @@ void menu_pedir_archivo(juego_t *juego) {
 			printf("\n-> ERROR: Ocurrio un error cargando el archivo, puede que sea un archivo invalido, asegurese de cumplir el formato pedido. Por favor, ingresa un nuevo archivo.\n");
 		else if (cargado == TODO_OK)
 			printf("\n\n 	  ╔══════════════════════════════════════════════════════════════╗\n"
-	       	"	  ║  ARCHIVO CARGADO CORRECTAMENTE! LA LISTA TIENE %i POKEMONES!  ║\n"
-	       "	  ╚══════════════════════════════════════════════════════════════╝\n\n", (int)lista_tamanio(juego_listar_pokemon(juego)));	
+			       "	  ║  ARCHIVO CARGADO CORRECTAMENTE! LA LISTA TIENE %i POKEMONES!  ║\n"
+			       "	  ╚══════════════════════════════════════════════════════════════╝\n\n",
+			       (int)lista_tamanio(juego_listar_pokemon(juego)));
 
 		free(a);
 	}
@@ -300,7 +316,7 @@ void menu_pedir_archivo(juego_t *juego) {
 	return;
 }
 
-jugada_t elegir_jugada(struct partida* partida)
+jugada_t elegir_jugada(struct partida *partida)
 {
 	jugada_t jugada;
 
@@ -314,10 +330,11 @@ jugada_t elegir_jugada(struct partida* partida)
 	return jugada;
 }
 
-bool ataque_jugador_usado(struct partida* partida, char nombre_ataque[20])
+bool ataque_jugador_usado(struct partida *partida, char nombre_ataque[20])
 {
-	for (int i = 0; i < 9; i++) {
-		if (strcmp(partida->ataques_usados_jugador[i].nombre, nombre_ataque) == 0) {
+	for (int i = INICIO_VALOR; i < MAX_ATAQUES_JUGADOR; i++) {
+		if (strcmp(partida->ataques_usados_jugador[i].nombre,
+			   nombre_ataque) == 0) {
 			return true;
 		}
 	}
@@ -327,38 +344,46 @@ bool ataque_jugador_usado(struct partida* partida, char nombre_ataque[20])
 
 bool jugada_valida(juego_t *juego, jugada_t jugada, struct partida *partida)
 {
-	pokemon_t *p = lista_buscar_elemento(partida->pokemones_jugador, comparar_pokemones, jugada.pokemon);
-	if ((p != NULL) && (pokemon_buscar_ataque(p, jugada.ataque) != NULL) && !ataque_jugador_usado(partida, jugada.ataque)) {
-		strcpy(partida->ataques_usados_jugador[partida->cant_ataques_usados_jugador].nombre, jugada.ataque);
+	pokemon_t *p = lista_buscar_elemento(
+		partida->pokemones_jugador, comparar_pokemones, jugada.pokemon);
+
+	if ((p != NULL) && (pokemon_buscar_ataque(p, jugada.ataque) != NULL) &&
+	    !ataque_jugador_usado(partida, jugada.ataque)) {
+		strcpy(partida->ataques_usados_jugador
+			       [partida->cant_ataques_usados_jugador]
+				       .nombre,
+		       jugada.ataque);
 		partida->cant_ataques_usados_jugador++;
 		return true;
+
 	} else {
 		printf("\n-> ERROR: Hubo un error al recibir tu jugada. Por favor, escriba nuevamente pokemon y ataque tal como se lo pide y verifique que sea correcto\n");
 		return false;
 	}
 }
 
-void elegir_ganador(juego_t *juego) 
+void elegir_ganador(juego_t *juego)
 {
 	int puntaje_j1 = juego_obtener_puntaje(juego, JUGADOR1);
 	int puntaje_j2 = juego_obtener_puntaje(juego, JUGADOR2);
 
 	if (puntaje_j1 > puntaje_j2)
 		printf("\n\n 	  ╔══════════════════════════════════════════════════════════════╗\n"
-	       	"	  ║ FELICITACIONES, HAS CONSEGUIDO GANAR LA BATALLA DE POKEMONES!║\n"
-	       "	  ╚══════════════════════════════════════════════════════════════╝\n\n");
+		       "	  ║ FELICITACIONES, HAS CONSEGUIDO GANAR LA BATALLA DE POKEMONES!║\n"
+		       "	  ╚══════════════════════════════════════════════════════════════╝\n\n");
 	else if (puntaje_j1 < puntaje_j2)
 		printf("\n\n 	  ╔══════════════════════════════════════════════════════════════╗\n"
-	       	"	  ║ LO SENTIMOS! HAS PERDIDO CONTRA TU OPONENTE, VUELVE A JUGAR! ║\n"
-	       "	  ╚══════════════════════════════════════════════════════════════╝\n\n");
+		       "	  ║ LO SENTIMOS! HAS PERDIDO CONTRA TU OPONENTE, VUELVE A JUGAR! ║\n"
+		       "	  ╚══════════════════════════════════════════════════════════════╝\n\n");
 	else if (puntaje_j1 == puntaje_j2)
 		printf("\n\n 	  ╔══════════════════════════════════════════════════════════════╗\n"
-	       	"	  ║ ESTA BATALLA HA RESULTADO EN UN EMPATE! WOW! VUELVE A JUGAR! ║\n"
-	       "	  ╚══════════════════════════════════════════════════════════════╝\n\n");
+		       "	  ║ ESTA BATALLA HA RESULTADO EN UN EMPATE! WOW! VUELVE A JUGAR! ║\n"
+		       "	  ╚══════════════════════════════════════════════════════════════╝\n\n");
 }
 
-bool inicializar_juego(juego_t *juego, adversario_t *adversario, struct partida *partida) {
-
+bool inicializar_juego(juego_t *juego, adversario_t *adversario,
+		       struct partida *partida)
+{
 	if (!juego || !adversario)
 		return false;
 
@@ -368,4 +393,3 @@ bool inicializar_juego(juego_t *juego, adversario_t *adversario, struct partida 
 
 	return true;
 }
-

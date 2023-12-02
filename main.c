@@ -14,7 +14,7 @@ int main(int argc, char const *argv[])
 	srand((unsigned int)time(NULL));
 
 	bool arrancar_juego = false;
-	while(!arrancar_juego) {
+	while (!arrancar_juego) {
 		mostrar_bienvenida();
 		char comando = ingresar_comando();
 		if (comando == LETRA_INICIAR_JUEGO)
@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
 		else if (comando == LETRA_SALIR_JUEGO) {
 			quit();
 			return 0;
-		}	
+		}
 	}
 
 	juego_t *juego = juego_crear();
@@ -30,7 +30,8 @@ int main(int argc, char const *argv[])
 	if (!juego)
 		return 0;
 
-	adversario_t *adversario = adversario_crear(juego_listar_pokemon(juego));
+	adversario_t *adversario =
+		adversario_crear(juego_listar_pokemon(juego));
 
 	if (!adversario) {
 		juego_destruir(juego);
@@ -47,27 +48,29 @@ int main(int argc, char const *argv[])
 
 	int rondas = 0;
 	inicializar_juego(juego, adversario, partida);
-	jugada_t jugada_jugador = {.pokemon = " ", .ataque = " "};
+	jugada_t jugada_jugador = { .pokemon = " ", .ataque = " " };
 
 	while (!juego_finalizado(juego)) {
-
 		jugada_jugador = elegir_jugada(partida);
 
 		while (!jugada_valida(juego, jugada_jugador, partida)) {
 			jugada_jugador = elegir_jugada(partida);
 		}
-		
-		jugada_t jugada_adversario = adversario_proxima_jugada(adversario);
-		resultado_jugada_t resultado_ronda = juego_jugar_turno(juego, jugada_jugador, jugada_adversario);
+
+		jugada_t jugada_adversario =
+			adversario_proxima_jugada(adversario);
+		resultado_jugada_t resultado_ronda = juego_jugar_turno(
+			juego, jugada_jugador, jugada_adversario);
 
 		if (resultado_ronda.jugador1 != ATAQUE_ERROR) {
-			printf("\n-> El jugador 1 tiene %i puntos.\n", juego_obtener_puntaje(juego, JUGADOR1));
-			printf("-> El adversario tiene %i puntos.\n", juego_obtener_puntaje(juego, JUGADOR2));
+			printf("\n-> El jugador 1 tiene %i puntos.\n",
+			       juego_obtener_puntaje(juego, JUGADOR1));
+			printf("-> El adversario tiene %i puntos.\n",
+			       juego_obtener_puntaje(juego, JUGADOR2));
 			printf("Se jugo la ronda correctamente.\n");
 			rondas++;
 			printf("-> RONDAS: %i", rondas);
 		}
-			
 	}
 
 	elegir_ganador(juego);
@@ -75,6 +78,3 @@ int main(int argc, char const *argv[])
 	adversario_destruir(adversario);
 	juego_destruir(juego);
 }
-
-
-

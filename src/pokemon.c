@@ -267,9 +267,9 @@ pokemon_t *pokemon_buscar(informacion_pokemon_t *ip, const char *nombre)
 		}
 	}
 
-	if (encontrado) 
+	if (encontrado)
 		return ip->pokemones[pos_encontrado];
-	else 
+	else
 		return NULL;
 }
 
@@ -312,7 +312,7 @@ const struct ataque *pokemon_buscar_ataque(pokemon_t *pokemon,
 
 	if (encontrado)
 		return &pokemon->ataques[pos_encontrado];
-	else 
+	else
 		return NULL;
 }
 

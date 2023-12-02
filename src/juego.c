@@ -60,12 +60,12 @@ void pasar_pokemones(pokemon_t *actual, void *_lista)
 		return;
 
 	lista_t *l = (lista_t *)_lista;
-	
+
 	if (!lista_insertar(l, actual))
 		return;
 }
 
-void pasar_ataques(const struct ataque* actual, void *_lista)
+void pasar_ataques(const struct ataque *actual, void *_lista)
 {
 	if (!actual || !_lista)
 		return;
@@ -82,7 +82,7 @@ jugador_t *jugador_crear()
 
 	if (!jugador)
 		return NULL;
-	
+
 	jugador->pokemones_elegidos = lista_crear();
 	jugador->ataques_jugador = lista_crear();
 	jugador->puntaje = VALOR_INICIAL;
@@ -115,7 +115,7 @@ JUEGO_ESTADO juego_cargar_pokemon(juego_t *juego, char *archivo)
 
 	juego->info = pokemon_cargar_archivo(archivo);
 
-	if (!juego->info) 
+	if (!juego->info)
 		return ERROR_GENERAL;
 
 	if (pokemon_cantidad(juego->info) < POKEMONES_MINIMOS_PARA_JUGAR) {
@@ -135,30 +135,37 @@ lista_t *juego_listar_pokemon(juego_t *juego)
 	return juego->pokemones;
 }
 
-bool pokemones_repetidos(const char *nombre1, const char *nombre2, const char *nombre3) 
+bool pokemones_repetidos(const char *nombre1, const char *nombre2,
+			 const char *nombre3)
 {
-	return (strcmp(nombre1, nombre2) == 0 || strcmp(nombre1, nombre3) == 0 || strcmp(nombre2, nombre3) == 0);
+	return (strcmp(nombre1, nombre2) == 0 ||
+		strcmp(nombre1, nombre3) == 0 || strcmp(nombre2, nombre3) == 0);
 }
 
-bool insertar_pokemones_jugador(juego_t *juego, JUGADOR jugador, pokemon_t *p1, pokemon_t *p2, pokemon_t *p3)
+bool insertar_pokemones_jugador(juego_t *juego, JUGADOR jugador, pokemon_t *p1,
+				pokemon_t *p2, pokemon_t *p3)
 {
 	if (jugador == JUGADOR1) {
 		if (!lista_insertar(juego->jugador1->pokemones_elegidos, p1))
 			return false;
-		con_cada_ataque(p1, pasar_ataques, juego->jugador1->ataques_jugador);
+		con_cada_ataque(p1, pasar_ataques,
+				juego->jugador1->ataques_jugador);
 
 		if (!lista_insertar(juego->jugador1->pokemones_elegidos, p2))
 			return false;
-		con_cada_ataque(p2, pasar_ataques, juego->jugador1->ataques_jugador);
+		con_cada_ataque(p2, pasar_ataques,
+				juego->jugador1->ataques_jugador);
 
 		if (!lista_insertar(juego->jugador1->pokemones_elegidos, p3))
 			return false;
-		con_cada_ataque(p3, pasar_ataques, juego->jugador1->ataques_jugador);
+		con_cada_ataque(p3, pasar_ataques,
+				juego->jugador1->ataques_jugador);
 
 	} else if (jugador == JUGADOR2) {
 		if (!lista_insertar(juego->jugador1->pokemones_elegidos, p3))
 			return false;
-		con_cada_ataque(p3, pasar_ataques, juego->jugador1->ataques_jugador);
+		con_cada_ataque(p3, pasar_ataques,
+				juego->jugador1->ataques_jugador);
 	}
 
 	return true;
@@ -173,16 +180,19 @@ JUEGO_ESTADO juego_seleccionar_pokemon(juego_t *juego, JUGADOR jugador,
 	if (pokemones_repetidos(nombre1, nombre2, nombre3))
 		return POKEMON_REPETIDO;
 
-	pokemon_t *p1 = lista_buscar_elemento(juego->pokemones, comparador_pokemones, (char *)nombre1);
-	pokemon_t *p2 = lista_buscar_elemento(juego->pokemones, comparador_pokemones, (char *)nombre2);
-	pokemon_t *p3 = lista_buscar_elemento(juego->pokemones, comparador_pokemones, (char *)nombre3);
+	pokemon_t *p1 = lista_buscar_elemento(
+		juego->pokemones, comparador_pokemones, (char *)nombre1);
+	pokemon_t *p2 = lista_buscar_elemento(
+		juego->pokemones, comparador_pokemones, (char *)nombre2);
+	pokemon_t *p3 = lista_buscar_elemento(
+		juego->pokemones, comparador_pokemones, (char *)nombre3);
 
 	if (!p1 || !p2 || !p3)
 		return POKEMON_INEXISTENTE;
-		
+
 	if (!insertar_pokemones_jugador(juego, jugador, p1, p2, p3))
 		return ERROR_GENERAL;
-		
+
 	return TODO_OK;
 }
 
@@ -191,35 +201,46 @@ RESULTADO_ATAQUE calcular_resultado(enum TIPO ataque, enum TIPO pokemon)
 	if (ataque == NORMAL || pokemon == NORMAL)
 		return ATAQUE_REGULAR;
 
-	switch(ataque) {
-		case FUEGO:
-			if (pokemon == AGUA) return ATAQUE_INEFECTIVO;
-			else if (pokemon == PLANTA) return ATAQUE_EFECTIVO;
-			break;
-		case PLANTA:
-			if (pokemon == FUEGO) return ATAQUE_INEFECTIVO;
-			else if (pokemon == ROCA) return ATAQUE_EFECTIVO;
-			break;		
-		case ROCA:
-			if (pokemon == PLANTA) return ATAQUE_INEFECTIVO;
-			else if (pokemon == ELECTRICO) return ATAQUE_EFECTIVO;
-			break;
-		case ELECTRICO:
-			if (pokemon == ROCA) return ATAQUE_INEFECTIVO;
-			else if (pokemon == AGUA) return ATAQUE_EFECTIVO;
-			break;
-		case AGUA:
-			if (pokemon == ELECTRICO) return ATAQUE_INEFECTIVO;
-			else if (pokemon == FUEGO) return ATAQUE_EFECTIVO;
-			break;
-		default:
-			break;
+	switch (ataque) {
+	case FUEGO:
+		if (pokemon == AGUA)
+			return ATAQUE_INEFECTIVO;
+		else if (pokemon == PLANTA)
+			return ATAQUE_EFECTIVO;
+		break;
+	case PLANTA:
+		if (pokemon == FUEGO)
+			return ATAQUE_INEFECTIVO;
+		else if (pokemon == ROCA)
+			return ATAQUE_EFECTIVO;
+		break;
+	case ROCA:
+		if (pokemon == PLANTA)
+			return ATAQUE_INEFECTIVO;
+		else if (pokemon == ELECTRICO)
+			return ATAQUE_EFECTIVO;
+		break;
+	case ELECTRICO:
+		if (pokemon == ROCA)
+			return ATAQUE_INEFECTIVO;
+		else if (pokemon == AGUA)
+			return ATAQUE_EFECTIVO;
+		break;
+	case AGUA:
+		if (pokemon == ELECTRICO)
+			return ATAQUE_INEFECTIVO;
+		else if (pokemon == FUEGO)
+			return ATAQUE_EFECTIVO;
+		break;
+	default:
+		break;
 	}
 
 	return ATAQUE_REGULAR;
 }
 
-int calcular_puntaje(struct ataque *ataque, RESULTADO_ATAQUE resultado, int *puntos)
+int calcular_puntaje(struct ataque *ataque, RESULTADO_ATAQUE resultado,
+		     int *puntos)
 {
 	if (resultado == ATAQUE_EFECTIVO)
 		*puntos += ((int)(ataque->poder * VALOR_MULTIPLICAR_PUNTAJE));
@@ -227,8 +248,7 @@ int calcular_puntaje(struct ataque *ataque, RESULTADO_ATAQUE resultado, int *pun
 		*puntos += ((int)(ataque->poder / VALOR_DIVIDIR_PUNTAJE));
 		if ((ataque->poder % VALOR_DIVIDIR_PUNTAJE) != RESTO_CERO)
 			(*puntos)++;
-	}
-	else
+	} else
 		*puntos = (int)ataque->poder;
 
 	return *puntos;
@@ -237,7 +257,8 @@ int calcular_puntaje(struct ataque *ataque, RESULTADO_ATAQUE resultado, int *pun
 bool ataque_usado(juego_t *juego, char nombre_ataque[20])
 {
 	for (int i = VALOR_INICIAL; i < MAX_ATAQUES; i++) {
-		if (strcmp(juego->jugador1->ataques_usados_jugador[i].nombre, nombre_ataque) == 0) {
+		if (strcmp(juego->jugador1->ataques_usados_jugador[i].nombre,
+			   nombre_ataque) == 0) {
 			return true;
 		}
 	}
@@ -245,15 +266,20 @@ bool ataque_usado(juego_t *juego, char nombre_ataque[20])
 	return false;
 }
 
-bool validar_jugada(juego_t *juego, jugada_t jugada) 
+bool validar_jugada(juego_t *juego, jugada_t jugada)
 {
 	if (!juego)
 		return false;
 
-	pokemon_t *pokemon = lista_buscar_elemento(juego->jugador1->pokemones_elegidos, comparador_pokemones, jugada.pokemon);
-	struct ataque* ataque = lista_buscar_elemento(juego->jugador1->ataques_jugador, comparador_ataques, jugada.ataque);
+	pokemon_t *pokemon =
+		lista_buscar_elemento(juego->jugador1->pokemones_elegidos,
+				      comparador_pokemones, jugada.pokemon);
+	struct ataque *ataque =
+		lista_buscar_elemento(juego->jugador1->ataques_jugador,
+				      comparador_ataques, jugada.ataque);
 
-	if (!pokemon || !pokemon_buscar_ataque(pokemon, jugada.ataque) || !ataque || ataque_usado(juego, jugada.ataque))
+	if (!pokemon || !pokemon_buscar_ataque(pokemon, jugada.ataque) ||
+	    !ataque || ataque_usado(juego, jugada.ataque))
 		return false;
 
 	return true;
@@ -263,38 +289,54 @@ bool es_ataque(struct ataque *ataque1, struct ataque *ataque2)
 {
 	if (!ataque1 || !ataque2)
 		return false;
-		
-	return ((strcmp(ataque1->nombre, ataque2->nombre) == 0) && (ataque1->poder == ataque2->poder) && (ataque1->tipo == ataque2->tipo));
+
+	return ((strcmp(ataque1->nombre, ataque2->nombre) == 0) &&
+		(ataque1->poder == ataque2->poder) &&
+		(ataque1->tipo == ataque2->tipo));
 }
 
 resultado_jugada_t juego_jugar_turno(juego_t *juego, jugada_t jugada_jugador1,
 				     jugada_t jugada_jugador2)
 {
-	resultado_jugada_t resultado = {ATAQUE_ERROR, ATAQUE_ERROR};
+	resultado_jugada_t resultado = { ATAQUE_ERROR, ATAQUE_ERROR };
 
 	if (!juego || (!validar_jugada(juego, jugada_jugador1)))
 		return resultado;
 
-	pokemon_t *p1 = lista_buscar_elemento(juego->jugador1->pokemones_elegidos, comparador_pokemones, jugada_jugador1.pokemon);
-	pokemon_t *p2 = lista_buscar_elemento(juego->pokemones, comparador_pokemones, jugada_jugador2.pokemon);
+	pokemon_t *p1 = lista_buscar_elemento(
+		juego->jugador1->pokemones_elegidos, comparador_pokemones,
+		jugada_jugador1.pokemon);
+	pokemon_t *p2 = lista_buscar_elemento(juego->pokemones,
+					      comparador_pokemones,
+					      jugada_jugador2.pokemon);
 
 	if (!p1 || !p2)
 		return resultado;
 
-	struct ataque *ataque_p1 = (struct ataque *)pokemon_buscar_ataque(p1, jugada_jugador1.ataque);
-	struct ataque *ataque_p2 = (struct ataque *)pokemon_buscar_ataque(p2, jugada_jugador2.ataque);
+	struct ataque *ataque_p1 = (struct ataque *)pokemon_buscar_ataque(
+		p1, jugada_jugador1.ataque);
+	struct ataque *ataque_p2 = (struct ataque *)pokemon_buscar_ataque(
+		p2, jugada_jugador2.ataque);
 
 	if (!ataque_p1 || !ataque_p2)
 		return resultado;
 
-	strcpy(juego->jugador1->ataques_usados_jugador[juego->jugador1->cant_ataques_usados_jugador].nombre, ataque_p1->nombre);
+	strcpy(juego->jugador1
+		       ->ataques_usados_jugador
+			       [juego->jugador1->cant_ataques_usados_jugador]
+		       .nombre,
+	       ataque_p1->nombre);
 	juego->jugador1->cant_ataques_usados_jugador++;
 
-	resultado.jugador1 = calcular_resultado(ataque_p1->tipo, pokemon_tipo(p2));
-	resultado.jugador2 = calcular_resultado(ataque_p2->tipo, pokemon_tipo(p1));
+	resultado.jugador1 =
+		calcular_resultado(ataque_p1->tipo, pokemon_tipo(p2));
+	resultado.jugador2 =
+		calcular_resultado(ataque_p2->tipo, pokemon_tipo(p1));
 
-	calcular_puntaje(ataque_p1, resultado.jugador1, &juego->jugador1->puntaje);
-	calcular_puntaje(ataque_p2, resultado.jugador2, &juego->puntaje_adversario);
+	calcular_puntaje(ataque_p1, resultado.jugador1,
+			 &juego->jugador1->puntaje);
+	calcular_puntaje(ataque_p2, resultado.jugador2,
+			 &juego->puntaje_adversario);
 
 	juego->rondas++;
 
@@ -313,7 +355,7 @@ int juego_obtener_puntaje(juego_t *juego, JUGADOR jugador)
 		return juego->jugador1->puntaje;
 	else if (jugador == JUGADOR2)
 		return juego->puntaje_adversario;
-	
+
 	return 0;
 }
 
@@ -325,9 +367,8 @@ bool juego_finalizado(juego_t *juego)
 void juego_destruir(juego_t *juego)
 {
 	if (juego) {
-
 		if (juego->info)
-			pokemon_destruir_todo(juego->info);	
+			pokemon_destruir_todo(juego->info);
 
 		if (juego->jugador1) {
 			lista_destruir(juego->jugador1->pokemones_elegidos);
@@ -335,7 +376,7 @@ void juego_destruir(juego_t *juego)
 			free(juego->jugador1);
 		}
 
-		if(juego->pokemones)
+		if (juego->pokemones)
 			lista_destruir(juego->pokemones);
 
 		free(juego);
